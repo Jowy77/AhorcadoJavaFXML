@@ -1,18 +1,16 @@
 package dad.javaFX.controllerAhorcado;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 import java.util.Optional;
-import dad.javaFX.modelAhorcado.PalabrasModel;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -45,11 +43,8 @@ public class PalabrasController implements Initializable {
 	// REFERECNIA AL CONTROLLER PRINCIPAL
 	private RootController rootController;
 
-	/*
-	 * MODEL PALABRASMODEL CLASE NO SE QUE LE PASA NO FUNCIONA CON EL BIND
-	 */
 
-	// Model
+	// MODEL
 	private ObservableList<String> oList = FXCollections.observableArrayList(new ArrayList<String>());
 	private ListProperty<String> list = new SimpleListProperty<>(oList);
 	private StringProperty palabraSelected = new SimpleStringProperty();
@@ -76,22 +71,79 @@ public class PalabrasController implements Initializable {
 		quitar.setOnAction(e -> OnQuitarPalabra());
 
 	}
+	
+	//ESTA FUNCION LEE EL FICHERO DE PALABRAS BUCA LA QUE QUIERES BORRAR Y LUEGO ESCIBE EL FICHERO SIN ESA POLABRA
+	//AL FINAL LA QUITA TAMBIEN DE LA LISTA DE PALABRAS
+	private void OnQuitarPalabra() {
 
-	private Object OnQuitarPalabra() {
+		if (palabraSelected.get() == null) {
+			Alert alerta = new Alert(AlertType.WARNING);
+			alerta.setTitle("BORRAR PALABRA");
+			alerta.setHeaderText("PALABRA NO SELECCIONADA");
+			alerta.setContentText("DEBES SELECCIONAR UNA PALABRA DE LA LISTA PARA BORRARLA");
+			alerta.showAndWait();
+		} else {
+			// READER
+			FileInputStream file = null;
+			InputStreamReader in = null;
+			BufferedReader buff = null;
+			// WRITER
+			FileOutputStream fout = null;
 
-		return null;
+			try {
+
+				file = new FileInputStream(getClass().getResource("/ficheros/palabras.txt").getFile());
+				in = new InputStreamReader(file, StandardCharsets.UTF_8);
+				buff = new BufferedReader(in);
+
+				String palabraEliminada = palabraSelected.get();
+				String linea = buff.readLine();
+				String texto = "";
+
+				System.out.println(linea);
+				while (linea != null) {
+
+					if (!linea.equalsIgnoreCase(palabraEliminada)) {
+						texto += linea + "\n";
+					}
+
+					System.out.println("comprobando");
+					linea = buff.readLine();
+				}
+
+				// CERRAMO LOS LECTORES
+				buff.close();
+				in.close();
+				file.close();
+				// --------------------
+
+				// PARA ESCRIBIR
+				fout = new FileOutputStream(getClass().getResource("/ficheros/palabras.txt").getFile());
+				// ESCRIBIMOS EL FICHERO DE NUEVO SIN LA PALABRA QUE QUEREMOS BORRAR
+				fout.write(texto.getBytes());
+				//AHORA LA QUITAMOSD E LA LISTA PARA QUE NO APAREZCA
+				list.remove(palabraSelected.get());
+				// CERRAMOS EL WRITER
+				fout.close();
+				// ---------------------------------------
+
+			} catch (IOException e) {
+				Alert alerta = new Alert(AlertType.ERROR);
+				alerta.setTitle("ERROR LECTURA FICHERO PALABRAS");
+				alerta.setHeaderText("HA OCURRIDO UN ERROR");
+				alerta.setContentText("HA OCURRIDO UN ERROR CON EL FICHERO COMPRUEBA QUE ESTE CORRECTO");
+				alerta.showAndWait();
+			}
+		}
+
 	}
 
 	private void OnAgregarPalabra() {
-		FileOutputStream file = null;
-		OutputStreamWriter out = null;
-		BufferedWriter buff = null;
+		FileOutputStream fout = null;
 
 		try {
-			//SE LE AÑADE TRUE AL FINAL PARA QUE SOBREESCRIBA
-			file = new FileOutputStream(getClass().getResource("/ficheros/palabras.txt").getFile(),true);
-			out = new OutputStreamWriter(file);
-			buff = new BufferedWriter(out);
+			// SE LE AÑADE TRUE AL FINAL PARA QUE SOBREESCRIBA
+			fout = new FileOutputStream(getClass().getResource("/ficheros/palabras.txt").getFile(), true);
 
 			// SACAMOS UN DIALOGO PARA QUE EL USUARIO INTRODUZCA LA PALABRA
 			TextInputDialog dialogo = new TextInputDialog();
@@ -99,7 +151,7 @@ public class PalabrasController implements Initializable {
 			dialogo.setHeaderText("INTRODUCE UNA PALABRA NUEVA");
 			Optional<String> palabra = dialogo.showAndWait();
 
-			if (palabra.equals(null)) {
+			if (palabra.get().equals("") || palabra.get().equals(null)) {
 				Alert alerta = new Alert(AlertType.WARNING);
 				alerta.setTitle("NUEVA PALABRA ERRONEA");
 				alerta.setHeaderText("HA OCURRIDO UN ERROR");
@@ -107,10 +159,13 @@ public class PalabrasController implements Initializable {
 				alerta.showAndWait();
 
 			} else {
-				//METO LA PALABRA EN LA LISTA Y LUEGO LA AGREGO AL FICHERO
+				// METO LA PALABRA EN LA LISTA Y LUEGO LA AGREGO AL FICHERO
 				listaPalabras.getItems().add(palabra.get().toUpperCase());
-				buff.write(palabra.get().toUpperCase());
+				fout.write("\n".getBytes());
+				fout.write(palabra.get().toUpperCase().getBytes());
 			}
+
+			fout.close();
 
 		} catch (IOException e) {
 			Alert alerta = new Alert(AlertType.ERROR);
@@ -118,8 +173,10 @@ public class PalabrasController implements Initializable {
 			alerta.setHeaderText("HA OCURRIDO UN ERROR");
 			alerta.setContentText("HA OCURRIDO UN ERROR CON EL FICHERO COMPRUEBA QUE ESTE CORRECTO");
 			alerta.showAndWait();
-		}
 
+		} catch (NoSuchElementException e) {
+
+		}
 	}
 
 	public void setPalabrasLista() {
