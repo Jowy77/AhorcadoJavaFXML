@@ -43,7 +43,6 @@ public class PalabrasController implements Initializable {
 	// REFERECNIA AL CONTROLLER PRINCIPAL
 	private RootController rootController;
 
-
 	// MODEL
 	private ObservableList<String> oList = FXCollections.observableArrayList(new ArrayList<String>());
 	private ListProperty<String> list = new SimpleListProperty<>(oList);
@@ -71,9 +70,10 @@ public class PalabrasController implements Initializable {
 		quitar.setOnAction(e -> OnQuitarPalabra());
 
 	}
-	
-	//ESTA FUNCION LEE EL FICHERO DE PALABRAS BUCA LA QUE QUIERES BORRAR Y LUEGO ESCIBE EL FICHERO SIN ESA POLABRA
-	//AL FINAL LA QUITA TAMBIEN DE LA LISTA DE PALABRAS
+
+	// ESTA FUNCION LEE EL FICHERO DE PALABRAS BUCA LA QUE QUIERES BORRAR Y LUEGO
+	// ESCIBE EL FICHERO SIN ESA POLABRA
+	// AL FINAL LA QUITA TAMBIEN DE LA LISTA DE PALABRAS
 	private void OnQuitarPalabra() {
 
 		if (palabraSelected.get() == null) {
@@ -100,14 +100,12 @@ public class PalabrasController implements Initializable {
 				String linea = buff.readLine();
 				String texto = "";
 
-				System.out.println(linea);
 				while (linea != null) {
 
 					if (!linea.equalsIgnoreCase(palabraEliminada)) {
 						texto += linea + "\n";
 					}
 
-					System.out.println("comprobando");
 					linea = buff.readLine();
 				}
 
@@ -121,7 +119,7 @@ public class PalabrasController implements Initializable {
 				fout = new FileOutputStream(getClass().getResource("/ficheros/palabras.txt").getFile());
 				// ESCRIBIMOS EL FICHERO DE NUEVO SIN LA PALABRA QUE QUEREMOS BORRAR
 				fout.write(texto.getBytes());
-				//AHORA LA QUITAMOSD E LA LISTA PARA QUE NO APAREZCA
+				// AHORA LA QUITAMOSD E LA LISTA PARA QUE NO APAREZCA
 				list.remove(palabraSelected.get());
 				// CERRAMOS EL WRITER
 				fout.close();
