@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
-
 import dad.javaFX.ahorcado.utiles.Jugador;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -26,15 +28,18 @@ public class PuntuacionesController implements Initializable{
 	@FXML private AnchorPane view;
 	
 	//TABLA DE USUARIOS
-	@FXML private TableView<Jugador> tablaUsuarios;
+	@FXML public TableView<Jugador> tablaUsuarios;
 	@FXML private TableColumn<Jugador, String> columnaJugador;
 	@FXML private TableColumn<Jugador, Integer> columnaPuntuacion;
 	
-	//REFERENCIA AL CONTROLLER PRINCIPAL
-	private RootController rootController;
+	//REFERENCIA AL CONTROLADOR PRINCIPAL
+	RootController controladorPrincipal;
 	
-	public PuntuacionesController(RootController root) throws IOException {
-		rootController=root;
+	//MODEL
+	private ObservableList<Jugador> listaJugadoresOb = FXCollections.observableArrayList(new ArrayList<Jugador>());
+	private ListProperty<Jugador> lista =  new SimpleListProperty<>(listaJugadoresOb);
+	
+	public PuntuacionesController() throws IOException {
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ViewFxml/PuntuacionVista.fxml"));
 		loader.setController(this);
@@ -43,24 +48,25 @@ public class PuntuacionesController implements Initializable{
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		//SE ESTABLECEN LAS COLUMNAS
+		
+		//SE CARGAN LAS COLUMNAS CON LA INFROMACION QUE VA DENTRO
 		columnaJugador.setCellValueFactory(new PropertyValueFactory<Jugador,String>("nombre"));
 		columnaPuntuacion.setCellValueFactory(new PropertyValueFactory<Jugador, Integer>("puntuacion"));
-		//Y AHORA SE CARGAN LOS DATOS DEL ARCHIVO
-		tablaUsuarios.setItems(getUsuarios());
+		//SE AÑADEN LOS USUARIOS A LA LISTA
+		setListaJugador(getUsuarios());
+		//Y SE VINCULAN CON EL MODEL
+		tablaUsuarios.itemsProperty().bind(lista);
+		tablaUsuarios.setEditable(true);
+		
 		
 	}
 	
-	public AnchorPane getViewPuntuaciones() {
-		return view;
-	}
-	
-	public boolean buscarJugador(String usuario) {
-		boolean jugadorEncontrado = false;
+	public int getIndexJugador(String usuario) {
+		int jugadorEncontrado=-1; 
 		
 		for(int i=0; i<tablaUsuarios.getItems().size();i++) {
 			if(tablaUsuarios.getItems().get(i).getNombre().equalsIgnoreCase(usuario)) {
-				jugadorEncontrado=true;
+				jugadorEncontrado=i;
 			}
 		}
 		
@@ -108,5 +114,22 @@ public class PuntuacionesController implements Initializable{
 			return null;
 		}
 	}
+	
+	public final ListProperty<Jugador> listaJugadorProperty() {
+		return this.lista;
+	}
 
+
+	public final ObservableList<Jugador> getListaJugador() {
+		return this.listaJugadorProperty().get();
+	}
+
+
+	public final void setListaJugador(final ObservableList<Jugador> listaJugador) {
+		this.listaJugadorProperty().set(listaJugador);
+	}
+	
+	public AnchorPane getViewPuntuaciones() {
+		return view;
+	}
 }
