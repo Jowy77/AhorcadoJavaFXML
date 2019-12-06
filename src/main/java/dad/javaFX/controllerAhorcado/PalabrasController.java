@@ -201,7 +201,6 @@ public class PalabrasController implements Initializable {
 	public String getPalabra() {
 		
 		int indice = (int)(Math.random()* listaPalabras.getItems().size() - 0) + 0;
-		System.out.println(indice);
 		String palabra = listaPalabras.getItems().get(indice);
 		
 		return palabra;
