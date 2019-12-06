@@ -14,7 +14,7 @@
    <children>
       <HBox layoutX="118.0" layoutY="339.0" prefHeight="31.0" prefWidth="365.0" spacing="10.0">
          <children>
-            <TextField fx:id="palabraIntentoTextField" alignment="TOP_LEFT" prefHeight="25.0" prefWidth="207.0" />
+            <TextField fx:id="palabraIntentoTextField" prefHeight="25.0" prefWidth="232.0" />
             <Button fx:id="letraButton" mnemonicParsing="false" text="Letra" />
             <Button fx:id="resolverButton" mnemonicParsing="false" text="Resolver" />
          </children>
@@ -39,15 +39,17 @@
             <Label fx:id="vidasLabel" text="Label" />
          </children>
       </VBox>
-      <VBox alignment="TOP_CENTER" layoutX="250.0" layoutY="102.0" prefHeight="150.0" prefWidth="67.0" spacing="5.0">
+      <VBox alignment="TOP_CENTER" layoutX="212.0" layoutY="91.0" prefHeight="203.0" prefWidth="177.0" spacing="5.0">
          <children>
             <ImageView fx:id="ahorcadoImage" fitHeight="153.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true" />
-            <Label>
+            <Label fx:id="palabraInvisibleLabel" alignment="CENTER" lineSpacing="5.0" prefHeight="77.0" prefWidth="155.0" text="ukju" textAlignment="CENTER">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
+               <font>
+                  <Font size="24.0" />
+               </font>
             </Label>
-            <Label />
          </children>
       </VBox>
    </children>

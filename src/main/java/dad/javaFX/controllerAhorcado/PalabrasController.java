@@ -40,17 +40,13 @@ public class PalabrasController implements Initializable {
 	@FXML
 	private ListView<String> listaPalabras;
 
-	// REFERECNIA AL CONTROLLER PRINCIPAL
-	private RootController rootController;
-
 	// MODEL
 	private ObservableList<String> oList = FXCollections.observableArrayList(new ArrayList<String>());
 	private ListProperty<String> list = new SimpleListProperty<>(oList);
 	private StringProperty palabraSelected = new SimpleStringProperty();
 	// ------------------------------------------------------------------------
 
-	public PalabrasController(RootController root) throws IOException {
-		root = rootController;
+	public PalabrasController() throws IOException {
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ViewFxml/PalabrasVista.fxml"));
 		loader.setController(this);
@@ -200,6 +196,15 @@ public class PalabrasController implements Initializable {
 			alerta.setContentText("HA OCURRIDO UN ERROR CON EL FICHERO COMPRUEBA QUE ESTE CORRECTO");
 			alerta.showAndWait();
 		}
+	}
+	
+	public String getPalabra() {
+		
+		int indice = (int)(Math.random()* listaPalabras.getItems().size() - 0) + 0;
+		System.out.println(indice);
+		String palabra = listaPalabras.getItems().get(indice);
+		
+		return palabra;
 	}
 
 	public SplitPane getViewPalabras() {

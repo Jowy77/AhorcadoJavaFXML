@@ -55,6 +55,18 @@ public class PuntuacionesController implements Initializable{
 		return view;
 	}
 	
+	public boolean buscarJugador(String usuario) {
+		boolean jugadorEncontrado = false;
+		
+		for(int i=0; i<tablaUsuarios.getItems().size();i++) {
+			if(tablaUsuarios.getItems().get(i).getNombre().equalsIgnoreCase(usuario)) {
+				jugadorEncontrado=true;
+			}
+		}
+		
+		return jugadorEncontrado;
+	}
+	
 	public ObservableList<Jugador> getUsuarios() {
 		//LECTOR PARA LOS USUARIOS AHORCADO
 		FileInputStream file = null;

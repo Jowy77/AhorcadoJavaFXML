@@ -18,7 +18,7 @@ public class RootController implements Initializable{
 	public RootController() throws IOException {
 		view = new TabPane();
 		partidaController = new PartidaController(this);
-		palabrasController = new PalabrasController(this);
+		palabrasController = new PalabrasController();
 		puntuacionController = new PuntuacionesController(this);
 		
 		Tab partida = new Tab("Partida", partidaController.getViewPartida());
